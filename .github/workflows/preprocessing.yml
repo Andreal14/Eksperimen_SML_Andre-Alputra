@@ -1,4 +1,4 @@
-name: "Automated Preprocessing — Wine Quality"
+name: "Automated Preprocessing — Heart Disease"
 
 on:
   push:
@@ -37,17 +37,18 @@ jobs:
       # ── 4. Verifikasi dataset tersedia ──
       - name: "Verify raw dataset exists"
         run: |
-          if [ ! -f "winequality-red.csv" ]; then
-            echo "Dataset tidak ditemukan, mendownload dari UCI..."
-            curl -L "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv" \
-              -o "winequality-red.csv"
+          if [ ! -f "heart.csv" ]; then
+            echo "Dataset tidak ditemukan, mendownload..."
+            curl -L "https://raw.githubusercontent.com/sharmaroshan/Heart-UCI-Dataset/master/heart.csv" \
+              -o "heart.csv"
           else
-            echo "Dataset ditemukan: $(wc -l < winequality-red.csv) baris"
+            echo "Dataset ditemukan: $(wc -l < heart.csv) baris"
           fi
 
       # ── 5. Jalankan script preprocessing ──
       - name: "Run preprocessing pipeline"
         run: |
+          cp heart.csv preprocessing/heart.csv
           cd preprocessing
           python automate_Andre-Alputra.py
 
@@ -55,25 +56,25 @@ jobs:
       - name: "Display preprocessing results"
         run: |
           echo "=== Hasil Preprocessing ==="
-          ls -lh preprocessing/winequality_preprocessing/
+          ls -lh preprocessing/heart_preprocessing/
           echo ""
           echo "=== Preview X_train.csv (5 baris) ==="
-          head -6 preprocessing/winequality_preprocessing/X_train.csv
+          head -6 preprocessing/heart_preprocessing/X_train.csv
           echo ""
           echo "=== Preview y_train.csv (5 baris) ==="
-          head -6 preprocessing/winequality_preprocessing/y_train.csv
+          head -6 preprocessing/heart_preprocessing/y_train.csv
 
       # ── 7. Commit & push hasil preprocessing ke repository ──
       - name: "Commit and push preprocessed dataset"
         run: |
           git config --global user.name  "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add preprocessing/winequality_preprocessing/
+          git add preprocessing/heart_preprocessing/
           git status
           if git diff --staged --quiet; then
             echo "Tidak ada perubahan untuk di-commit."
           else
-            git commit -m "chore: update preprocessed wine quality dataset [skip ci]
+            git commit -m "chore: update preprocessed heart disease dataset [skip ci]
 
             Triggered by: ${{ github.event_name }}
             Commit SHA  : ${{ github.sha }}
