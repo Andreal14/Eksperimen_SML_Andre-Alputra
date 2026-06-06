@@ -3,9 +3,6 @@ name: "Automated Preprocessing — Wine Quality"
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'winequality-red.csv'
-      - 'preprocessing/automate_Andre-Alputra.py'
   workflow_dispatch:
     inputs:
       reason:
